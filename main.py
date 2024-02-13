@@ -45,6 +45,7 @@ def peliculas_duracion(Pelicula: str):
 
 @app.get('/franquicia/')
 def franquicia(Franquicia: str):
+    franquicia_data = films.dropna(subset=['belongs_to_collection'])
     franquicia_data = films[films['belongs_to_collection'] == Franquicia]
     peliculas_count = franquicia_data.shape[0]
     ganancia_total = franquicia_data['revenue'].sum()
