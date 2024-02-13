@@ -3,9 +3,30 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from fuzzywuzzy import fuzz
 from typing import List
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
+templates = Jinja2Templates(directory="templates")
+
+# Página de inicio
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+# Decorador personalizado
+def custom_decorator(func):
+    def wrapper(*args, **kwargs):
+        print("Se ha ejecutado el decorador")
+        return func(*args, **kwargs)
+    return wrapper
+
+# Utiliza el decorador en una ruta
+@app.get('/ruta_decorada')
+@custom_decorator
+def ruta_decorada():
+    return "Esta es una ruta decorada"
 
 # Cargamos el dataset en un DataFrame
 films = pd.read_csv('Films2.csv')
@@ -112,9 +133,3 @@ def get_recommendations(title: str) -> List[str]:
 def recommend(title: str):
     recommendations = get_recommendations(title)
     return {'recommended_movies': recommendations}
-
-    top_indices = [i[0] for i in similarity_scores[1:6]]
-    top_movies = movies.iloc[top_indices]
-    recommendations = top_movies['title'].tolist()
-
-    return recommendations
