@@ -5,3 +5,4 @@ scipy
 uvicorn
 fastapi
 fuzzywuzzy
+Jinja2==3.0.3
